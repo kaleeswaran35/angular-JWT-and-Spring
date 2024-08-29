@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">  
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Management</title>
+  <link rel="stylesheet" href="home.component.css"> <!-- Link to your CSS file -->
+</head>
+
+<body>
+  <!-- Search and Clear Section -->
+  <div class="search-bar">
+    <mat-form-field appearance="fill">
+      <input matInput [(ngModel)]="searchQuery" (input)="search()" placeholder="Search by product name">
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="clear()">Clear</button>
+  </div>
+
+  <!-- Add Column -->
+  <div class="button-container">    
+    <button mat-raised-button color="primary" (click)="openAddProductDialog()">
+      Add Product
+    </button>      
+  </div> 
+
+
+  <!-- Product Table -->
+  <div class="parent-container">
+    <div class="table-container">
+      <mat-table [dataSource]="dataSource">
+
+        <!-- Product Name Column -->
+        <ng-container matColumnDef="productName">
+          <th mat-header-cell *matHeaderCellDef> Product Name </th>
+          <td mat-cell *matCellDef="let element"> {{element.productName}} </td>
+        </ng-container>
+
+        <!-- Quantity Column -->
+        <ng-container matColumnDef="qty">
+          <th mat-header-cell *matHeaderCellDef> Quantity </th>
+          <td mat-cell *matCellDef="let element"> {{element.qty}} </td>
+        </ng-container>
+
+        <!-- Price Column -->
+        <ng-container matColumnDef="price">
+          <th mat-header-cell *matHeaderCellDef> Price </th>
+          <td mat-cell *matCellDef="let element"> {{element.price}} </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef> Actions </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button color="primary" (click)="openEditDialog(element)">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <!-- Delete Column -->
+        <ng-container matColumnDef="Delete">
+          <th mat-header-cell *matHeaderCellDef> Delete </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button color="warn" (click)="onDelete(element.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+
+        <!-- Table Header and Rows -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </mat-table>
+    </div>
+  </div>
+
+  <!-- Angular Material Dialog is not directly placed in HTML -->
+  <!-- It will be triggered by the 'openEditDialog' method in your TypeScript code -->
+
+</body>
+
+</html>

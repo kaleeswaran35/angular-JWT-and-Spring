@@ -1,0 +1,97 @@
+/* Styles for the Search and Clear Section */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between the search input and button */
+  margin-bottom: 20px;
+}
+
+.search-bar mat-form-field {
+  flex: 1; /* Allow the search input to take up remaining space */
+}
+
+.search-bar button {
+  margin-left: 10px; /* Space between input and button */
+}
+
+/* Styles for the Table Container */
+/* Parent container for flexbox centering */
+.parent-container {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically, if needed */
+  height: 100vh; /* Full viewport height, if vertical centering is desired */
+}
+
+/* Table container styling */
+.table-container {
+  margin: 20px auto; /* Center horizontally */
+  padding: 20px;
+  background-color: #fff; /* White background for the table */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  border: 1px solid #e0e0e0; /* Light border */
+  max-width: 1200px; /* Optional: Set a max-width to prevent stretching on large screens */
+}
+
+
+.mat-header-cell, .mat-cell {
+  padding: 10px; /* Padding inside table cells */
+}
+
+/* Styles for the Edit Form */
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #f9f9f9; /* Light background for the form */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.edit-form mat-form-field {
+  width: 100%;
+  margin-bottom: 20px; /* Space between form fields */
+}
+
+.edit-form button {
+  margin-right: 10px; /* Space between Save and Cancel buttons */
+}
+
+/* Ensure that buttons in forms are styled */
+.mat-raised-button {
+  margin-top: 10px; /* Space above the button */
+}
+
+.mat-icon-button {
+  width: 70px; /* Set a specific width for the button */
+  height: 70px; /* Set a specific height for the button */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%; /* Rounded button */
+}
+
+/* Make sure mat-icon is visible inside the button */
+.mat-icon {
+  font-size: 8px; /* Set the icon size */
+  color: #000; /* Set icon color to black or adjust as needed */
+}
+
+/* Optionally, provide background and color for button if needed */
+button.mat-icon-button {
+  background-color: #e0e0e0; /* Light background color */
+  border: none; /* Remove default border */
+}
+
+button.mat-icon-button:hover {
+  background-color: #c0c0c0; /* Slightly darker background on hover */
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin: 16px; /* Optional: Adds some margin around the button */
+}

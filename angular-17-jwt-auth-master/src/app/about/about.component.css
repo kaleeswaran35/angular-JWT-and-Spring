@@ -1,0 +1,33 @@
+/* src/app/about/about.component.css */
+.about {
+    padding: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  h1, h2 {
+    color: #333;
+  }
+  
+  .company-info, .contact-info {
+    margin-top: 1.5rem;
+  }
+  
+  .company-info p, .contact-info p {
+    line-height: 1.6;
+  }
+  
+  address {
+    font-style: normal;
+    line-height: 1.6;
+  }
+
+  /* Add this to app.component.css or a global stylesheet */
+.back-to-home-button {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 1000; /* Ensures the button is on top of other elements */
+}
+
+  
