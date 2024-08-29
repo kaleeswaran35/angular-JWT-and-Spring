@@ -157,7 +157,7 @@ export class HomeComponent implements OnInit {
       result => {
 
       if (result) {
-        alert('Form submitted!');
+        alert('Product added');
         this.ngOnInit(); // Reload products after dialog closes
       }
     });
