@@ -29,7 +29,10 @@ export class AddProductComponent {
     this.insertform = this.fb.group({
       productName: [this.insertItem.productName, Validators.required],
       qty: [this.insertItem.qty],
-      price: [this.insertItem.price, [Validators.required, Validators.min(0)]]
+      price: [this.insertItem.price, [Validators.required, Validators.min(0)]],
+      startDate: [new Date().toISOString().split('T')[0]], // Default to today's date
+      endDate: [new Date().toISOString().split('T')[0]]
+
     });
   }
 

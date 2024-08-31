@@ -25,7 +25,10 @@ export class EditDialogComponent implements OnInit {
     this.editform = this.fb.group({
       productName: [this.editingItem.productName, Validators.required],
       qty: [this.editingItem.qty],
-      price: [this.editingItem.price, [Validators.required, Validators.min(0)]]
+      price: [this.editingItem.price, [Validators.required, Validators.min(0)]],
+      //startDate: [new Date().toISOString().split('T')[0]], // Default to today's date
+      endDate: [new Date().toISOString().split('T')[0]]
+
     });
   }
 
@@ -38,7 +41,8 @@ export class EditDialogComponent implements OnInit {
       console.error('im inside the save', this.editingItem);
       this.userService.updateItem(updatedProduct).subscribe(
         () => {
-          this.dialogRef.close(true); // Close dialog and indicate success
+          this.dialogRef.close(true);           // Close dialog and indicate success
+          alert("Product updated");
         },
         (error) => {
           console.error('Error updating item', error);

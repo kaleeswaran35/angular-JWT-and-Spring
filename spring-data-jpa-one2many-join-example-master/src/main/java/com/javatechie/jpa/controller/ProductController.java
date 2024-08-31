@@ -9,8 +9,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.util.RawValue;
 import com.javatechie.exception.ResourceNotFoundException;
+import com.javatechie.jpa.dto.PaginatedResponse;
 import com.javatechie.jpa.entity.Product;
 import com.javatechie.jpa.repository.ProductRepository;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +35,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 /**
  *
@@ -54,10 +59,20 @@ public class ProductController {
      * @return @throws java.lang.Exception
      */
     @GetMapping("/findAllProducts")
-    public List<Product> findAllProducts() throws Exception, Throwable {
+    public PaginatedResponse<Product> findAllProducts(@RequestParam int page,
+            @RequestParam int size) throws Exception, Throwable {
 
         log.info("Products" + productRepository.findAll());
-        return productRepository.findAll();
+        Page<Product> productPage = productRepository.findAll(PageRequest.of(page, size));
+
+        PaginatedResponse<Product> response = new PaginatedResponse<>();
+        response.setContent(productPage.getContent());
+        response.setPage(page);
+        response.setSize(size);
+        response.setTotalElements(productPage.getTotalElements());
+        response.setTotalPages(productPage.getTotalPages());
+
+        return response;
 
     }
 
@@ -65,10 +80,6 @@ public class ProductController {
     public List<Product> findAll(@RequestParam(value = "productName", required = false) String productName) throws JsonProcessingException {//Convert JSON array to Object.
         List<Product> product_list = new ArrayList<Product>();
         product_list = productRepository.findAll(productName);
-        ObjectMapper mapper = new ObjectMapper();
-        RawValue raw = new RawValue(mapper.writeValueAsString(product_list));
-        ObjectNode root = mapper.createObjectNode();
-        root.putRawValue("list", raw);
         log.info("product_list" + product_list);
         return product_list;
 
@@ -116,6 +127,30 @@ public class ProductController {
             // The transaction will be rolled back due to the rollbackFor setting
             throw e.getCause();
         }
+    }
+
+    @GetMapping("/search/bydate")
+    public PaginatedResponse<Product> searchByDates(
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate,
+            @RequestParam int page,
+            @RequestParam int size) {
+
+        // Create a PageRequest object with the requested page and size
+        PageRequest pageRequest = PageRequest.of(page, size);
+
+        // Assuming the repository method is modified to return Page<Product> for pagination
+        Page<Product> productPage = productRepository.findEventsByDateRange(startDate, endDate, pageRequest);
+
+        // Prepare the PaginatedResponse
+        PaginatedResponse<Product> response = new PaginatedResponse<>();
+        response.setContent(productPage.getContent());
+        response.setPage(productPage.getNumber());
+        response.setSize(productPage.getSize());
+        response.setTotalElements(productPage.getTotalElements());
+        response.setTotalPages(productPage.getTotalPages());
+
+        return response;
     }
 
 }

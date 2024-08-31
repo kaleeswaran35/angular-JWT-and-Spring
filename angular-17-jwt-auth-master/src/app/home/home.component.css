@@ -1,3 +1,11 @@
+.header-container {
+  display: flex;
+  justify-content: space-between; /* Distribute space between items */
+  align-items: center;
+}
+
+
+
 /* Styles for the Search and Clear Section */
 .search-bar {
   display: flex;
@@ -95,3 +103,36 @@ button.mat-icon-button:hover {
   justify-content: flex-end;
   margin: 16px; /* Optional: Adds some margin around the button */
 }
+
+.search-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Align to the right */
+  flex-grow: 1; /* Allow this container to take up remaining space */
+}
+
+/* Styling for the search bar */
+.search-bar {
+  display: flex;
+  align-items: center; /* Center items vertically */
+  gap: 10px; /* Space between the search input and button */
+}
+
+/* Ensure the search input takes up remaining space */
+.search-bar mat-form-field {
+  flex: 1;
+}
+
+/* Add space between the input and button */
+.search-bar button {
+  margin-left: 10px;
+}
+
+mat-form-field {
+  flex: 1; /* Allows the input field to take up available space */
+}
+
+button {
+  white-space: nowrap; /* Prevents the button from wrapping text */
+}
+

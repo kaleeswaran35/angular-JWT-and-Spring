@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">  
+<html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,26 +8,55 @@
   <link rel="stylesheet" href="home.component.css"> <!-- Link to your CSS file -->
 </head>
 
+<app-clock></app-clock>
+
+
+
 <body>
-  <!-- Search and Clear Section -->
-  <div class="search-bar">
-    <mat-form-field appearance="fill">
-      <input matInput [(ngModel)]="searchQuery" (input)="search()" placeholder="Search by product name">
-    </mat-form-field>
-    <button mat-raised-button color="primary" (click)="clear()">Clear</button>
+  <div class="header-container">
+    <div class="date-search">
+      <mat-form-field appearance="fill">
+        <mat-label>Start Date</mat-label>
+        <input matInput [matDatepicker]="startPicker" [(ngModel)]="startDate" placeholder="Choose a date" (dateChange)="onDateChange()" >
+        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>End Date</mat-label>
+        <input matInput [matDatepicker]="endPicker" [(ngModel)]="endDate" placeholder="Choose a date" (dateChange)="onDateChange()">
+        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+      &nbsp; 
+      <button mat-raised-button color="primary" (click)="searchByDate()" [disabled]="isSearchDisabled">Search</button>
+      &nbsp;
+      <button mat-raised-button color="primary" (click)="clear()">Clear</button>
+    </div>
+
+    <!-- Search Bar Container -->
+    <div class="search-container">
+      <div class="search-bar">
+        <mat-form-field appearance="fill">
+          <input matInput [(ngModel)]="searchQuery" (input)="search()" placeholder="Search by product name">
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="clear()">Clear</button> 
+      </div>
+    </div>
   </div>
 
   <!-- Add Column -->
-  <div class="button-container">    
-    <button mat-raised-button color="primary" (click)="openAddProductDialog()">
-      Add Product
-    </button>      
-  </div> 
-
+   
+ 
 
   <!-- Product Table -->
   <div class="parent-container">
     <div class="table-container">
+      <div class="button-container">
+        <button mat-raised-button color="primary" (click)="openAddProductDialog()">
+          Add Product
+        </button>
+      </div>    
       <mat-table [dataSource]="dataSource">
 
         <!-- Product Name Column -->
@@ -72,6 +102,11 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </mat-table>
+
+      <mat-paginator [pageSizeOptions]="[10]" [pageSize]="pageSize" [length]="length"
+        (page)="getServerData($event)" showFirstLastButtons = true>
+      </mat-paginator>
+
     </div>
   </div>
 

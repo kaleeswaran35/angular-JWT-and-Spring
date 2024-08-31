@@ -1,5 +1,6 @@
 package com.javatechie.jpa.entity;
 
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,7 +26,9 @@ public class Product {
     private Integer id;
     private String productName;
     private Integer qty;
-    private Integer price;   
+    private Integer price;  
+    private LocalDate startDate;
+    private LocalDate endDate;
       
     
 }

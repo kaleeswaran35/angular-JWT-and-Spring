@@ -2,11 +2,15 @@ package com.javatechie.jpa.repository;
 
 import com.javatechie.jpa.entity.Product;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.hibernate.criterion.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -35,5 +39,10 @@ public interface ProductRepository extends JpaRepository<Product,Integer> {
     
     @Query(value = "INSERT INTO Product (productName,qty,price) VALUES (:productName,:qty,:price);",nativeQuery = true)
     public List<Product> create();
+    
+    @Query(value = "SELECT * FROM Product  WHERE start_date BETWEEN :start_date AND :end_date",nativeQuery = true)
+    Page<Product> findEventsByDateRange(String start_date,String end_date, Pageable pageable);
+
+    
             
 }

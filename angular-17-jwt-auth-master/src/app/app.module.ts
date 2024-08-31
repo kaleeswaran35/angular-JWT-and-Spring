@@ -30,6 +30,10 @@ import { FooterComponent } from './footer/footer.component';
 import { ContactComponent } from './contact/contact.component';
 import { AboutComponent } from './about/about.component';
 import { AddProductComponent } from './add-product/add-product.component';
+import { ClockComponent } from './clock/clock.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @NgModule({
   declarations: [
@@ -42,7 +46,8 @@ import { AddProductComponent } from './add-product/add-product.component';
     FooterComponent,
     ContactComponent,
     AboutComponent,
-    AddProductComponent   
+    AddProductComponent,
+    ClockComponent   
     
   ],
   imports: [
@@ -62,8 +67,10 @@ import { AddProductComponent } from './add-product/add-product.component';
     MatIconModule,
     MatToolbarModule,
     MatCardModule,
-    BrowserAnimationsModule 
-          
+    BrowserAnimationsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatPaginatorModule          
     
   ],
   providers: [

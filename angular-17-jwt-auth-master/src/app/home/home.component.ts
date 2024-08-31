@@ -1,5 +1,5 @@
 // app.component.ts
-import { Component, Injectable, OnInit } from '@angular/core';
+import { Component, Injectable, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Product } from '../model/Product';
 import { UserService } from '../_services/user.service';
@@ -7,6 +7,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EditDialogComponent } from '../edit-dialog/edit-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { AddProductComponent } from '../add-product/add-product.component'
+import { isEmpty, Observable } from 'rxjs';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-home',
@@ -28,33 +30,75 @@ export class HomeComponent implements OnInit {
   insertItem: any;
   insertform: any;
 
+  startDate: Date | null = null;
+  endDate: Date | null = null;
+
+  pageSize = 10; // Default page size
+  length = 0;  // Total number of items (should be fetched from the server)
+  data$: Observable<any> | undefined;
+  pageIndex = 0;
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  isSearchDisabled: boolean | undefined;
+
+
+
+
   constructor(private userService: UserService, private fb: FormBuilder, public dialog: MatDialog) {
+
+
 
     this.editform = this.fb.group({
       productName: ['', Validators.required],
       qty: ['', [Validators.required, Validators.min(1)]],
-      price: ['', [Validators.required, Validators.min(0)]]
+      price: ['', [Validators.required, Validators.min(0)]],
+      endDate: [new Date().toISOString().split('T')[0]]
     });
 
     this.insertform = this.fb.group({
       productName: ['', Validators.required],
       qty: ['', [Validators.required, Validators.min(1)]],
-      price: ['', [Validators.required, Validators.min(0)]]
+      price: ['', [Validators.required, Validators.min(0)]],
+      startDate: [new Date().toISOString().split('T')[0]], // Default to today's date
+      endDate: [new Date().toISOString().split('T')[0]]
     });
+
+    // Default to one month later
 
 
 
   }
 
+
   ngOnInit(): void {
-    this.userService.getPublicContent().subscribe(
-      (response: Product[]) => {
-        this.dataSource.data = response.sort((a, b) => a.productName.localeCompare(b.productName));
-      },
-      (error) => {
-        console.error('Error fetching data', error);
-      }
-    );
+    // Initial data fetch
+    this.getServerData({
+      pageIndex: 0, pageSize: this.pageSize,
+      length: 0
+    });
+    //this.searchByDate();
+  }
+
+  onDateChange() {
+    this.checkSearchButtonState();
+  }
+
+  checkSearchButtonState() {
+    this.isSearchDisabled = !this.startDate || !this.endDate;
+  }
+
+  getServerData(event: PageEvent): void {
+    // Fetch data from the server based on the pagination event
+    this.data$ = this.userService.getPublicContent(event);
+    console.log();
+    // Update length dynamically based on the response, if available
+    this.data$.subscribe(response => {
+      this.length = response.totalElements;
+      this.dataSource.data = response.content.sort((a: { productName: string; }, b: { productName: any; }) => a.productName.localeCompare(b.productName));
+      console.log(response); // Handle the data
+    }, error => {
+      console.error('Error fetching data:', error);
+    });
   }
 
 
@@ -77,6 +121,7 @@ export class HomeComponent implements OnInit {
           //
           this.editingItem = null;
           this.editform.reset();
+          alert('Product Updated');
           this.ngOnInit();
         },
         (error) => {
@@ -103,6 +148,8 @@ export class HomeComponent implements OnInit {
 
   clear(): void {
     this.searchQuery = '';
+    this.startDate = null;
+    this.endDate = null;
     this.ngOnInit(); // Reset search
   }
 
@@ -149,22 +196,54 @@ export class HomeComponent implements OnInit {
     }
 
 
-    const dialogRef = this.dialog.open(AddProductComponent,{
+    const dialogRef = this.dialog.open(AddProductComponent, {
       width: '250px',
       data: insertProduct
-    });    
-    dialogRef.afterClosed().subscribe(     
+    });
+    dialogRef.afterClosed().subscribe(
       result => {
 
-      if (result) {
-        alert('Product added');
-        this.ngOnInit(); // Reload products after dialog closes
-      }
-    });
+        if (result) {
+          alert('Product added');
+          this.ngOnInit(); // Reload products after dialog closes
+        }
+      });
   }
 
   
-}
+  searchByDate(event?: PageEvent) {
+    // If event is undefined, assume we are doing an initial load or reset    
+    const pageIndex = event ? event.pageIndex : this.pageIndex;
+    const pageSize = event ? event.pageSize : this.pageSize;
+    if (this.startDate && this.endDate) {
+      this.userService.searchEvents(
+        this.startDate.toISOString().split('T')[0], // Format to yyyy-MM-dd
+        this.endDate.toISOString().split('T')[0],
+        pageIndex,
+        pageSize
+      ).subscribe(
+        response => {
+          this.length = response.totalElements;
+          this.dataSource.data = response.content.sort((a: { productName: string }, b: { productName: string }) => a.productName.localeCompare(b.productName));
+          console.log(response);
+        });
+      }else {
+        // Reset or fetch full data if search criteria is empty
+        this.userService.searchEvents(
+          '', // Or a default date range
+          '',
+          pageIndex,
+          pageSize
+        ).subscribe(
+          response => {
+            this.length = response.totalElements;
+            this.dataSource.data = response.content.sort((a: { productName: string }, b: { productName: string }) => a.productName.localeCompare(b.productName));
+            console.log(response);
+          });}              
+    }    
+  }
+
+
 
 
 
