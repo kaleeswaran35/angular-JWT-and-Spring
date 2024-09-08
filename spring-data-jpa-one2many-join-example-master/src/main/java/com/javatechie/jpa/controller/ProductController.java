@@ -5,27 +5,17 @@
 package com.javatechie.jpa.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.util.RawValue;
-import com.javatechie.exception.ResourceNotFoundException;
 import com.javatechie.jpa.dto.PaginatedResponse;
 import com.javatechie.jpa.entity.Product;
 import com.javatechie.jpa.repository.ProductRepository;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.data.domain.Page;
+
 import org.springframework.data.domain.PageRequest;
 
 /**
@@ -152,5 +143,10 @@ public class ProductController {
 
         return response;
     }
-
+    
+    @GetMapping("/recent/search")
+    public List<Product> getRecentSearchResults(@RequestParam("todayDate") String start_date) {        
+        return productRepository.findTop10ByTimestampBeforeOrderByTimestampDesc(start_date);
+    }
 }
+

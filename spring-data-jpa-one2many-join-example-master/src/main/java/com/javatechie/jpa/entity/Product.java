@@ -29,6 +29,7 @@ public class Product {
     private Integer price;  
     private LocalDate startDate;
     private LocalDate endDate;
+    private LocalDate todayDate;
       
     
 }
