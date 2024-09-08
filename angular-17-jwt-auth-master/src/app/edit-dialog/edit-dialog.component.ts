@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../_services/user.service';
 import { Product } from '../model/Product';
+import { LoggerService } from '../_services/logger.services'
 
 @Component({
   selector: 'app-edit-dialog',
@@ -17,7 +18,8 @@ export class EditDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<EditDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public editingItem: Product,
     private fb: FormBuilder,
-    private userService: UserService
+    private userService: UserService,
+    private logger:LoggerService    
   ) {}
 
   ngOnInit(): void {
@@ -38,17 +40,22 @@ export class EditDialogComponent implements OnInit {
         ...this.editingItem,
         ...this.editform.value
       };
-      console.error('im inside the save', this.editingItem);
-      this.userService.updateItem(updatedProduct).subscribe(
-        () => {
-          this.dialogRef.close(true);           // Close dialog and indicate success
-          alert("Product updated");
-        },
-        (error) => {
-          console.error('Error updating item', error);
-        }
-      );
-    }
+      console.log('im inside the save', this.editingItem);
+      this.userService.updateItem(updatedProduct).subscribe(() => {
+        alert('Product Updated');
+        this.dialogRef.close(true);
+        console.log(updatedProduct);
+        this.logger.log('Updated Product Name:',updatedProduct.productName); // Added logger to write in file
+           // Close dialog and indicate success
+        next: () => {
+          console.log(updatedProduct);
+          this.logger.log('Updated Product Name:',updatedProduct.productName); // Added logger to write in file
+          // Optionally, reset form or navigate to another page
+        }},        
+      (error) => {
+        console.error('Error updating item', error);
+      });
+    }   
   }
 
   cancel(): void {

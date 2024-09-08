@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders, HttpInterceptor, HttpParams, provideHttpClient
 import { Observable } from 'rxjs';
 import { Product } from '../model/Product';
 import { PageEvent } from '@angular/material/paginator';
+import { LoggerService } from './logger.services';
 
 
 const API_URL = 'http://localhost:8080/';
@@ -18,15 +19,15 @@ const httpOptions = {
   providedIn: 'root',
 })
 export class UserService {
+  
 
-
-
-
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,private logger: LoggerService) { }
 
 
   getPublicContent(event?: PageEvent): Observable<any> {
     let params = new HttpParams();
+
+    
     
     if (event) {
       params = params.set('page', event.pageIndex.toString())
@@ -65,6 +66,15 @@ export class UserService {
       .set('size', pageSize.toString())
     
     return this.http.get<any>(API_URL + 'search/bydate', { params });
+  }
+
+  addSearchTerm(term: string): Observable<any> {
+    console.log("Item in search" + JSON.stringify(term));
+    return this.http.post(API_URL + 'search/', term);
+  }
+
+  getRecentSearchResults(event: any): Observable<any>{       
+    return this.http.get<any>(API_URL + 'recent-searches');
   }
 
 }

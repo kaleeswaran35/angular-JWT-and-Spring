@@ -34,6 +34,8 @@ import { ClockComponent } from './clock/clock.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatListModule } from '@angular/material/list'
 
 @NgModule({
   declarations: [
@@ -70,7 +72,9 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     BrowserAnimationsModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatPaginatorModule          
+    MatPaginatorModule,
+    MatAutocompleteModule,
+    MatListModule          
     
   ],
   providers: [

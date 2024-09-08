@@ -136,3 +136,16 @@ button {
   white-space: nowrap; /* Prevents the button from wrapping text */
 }
 
+/* styles.css or search.component.css */
+.custom-select .mat-select-panel {
+  max-height: 200px; /* Set the maximum height of the dropdown panel */
+  overflow: auto;    /* Enable scrollbars if content exceeds the maximum height */
+}
+
+/* search.component.css */
+:host ::ng-deep .custom-select .mat-select-panel {
+  max-height: 200px; /* Set the maximum height of the dropdown panel */
+  overflow: auto;    /* Enable scrollbars if content exceeds the maximum height */
+}
+
+

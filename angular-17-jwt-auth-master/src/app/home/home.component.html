@@ -38,12 +38,20 @@
     <div class="search-container">
       <div class="search-bar">
         <mat-form-field appearance="fill">
-          <input matInput [(ngModel)]="searchQuery" (input)="search()" placeholder="Search by product name">
+          <input matInput [(ngModel)]="searchQuery" (input)="search()" (click)="loadRecentSearchResults($event)"
+            placeholder="Search by Name" (input)="addsearchTerm(searchQuery)">                    
         </mat-form-field>
-        <button mat-raised-button color="primary" (click)="clear()">Clear</button> 
+        <mat-form-field appearance="fill">
+          <mat-select placeholder="Recent searches">
+            <mat-option *ngFor="let item of uniqueItems" [value]="item.term">
+              {{ item.term }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="clear()">Clear</button>
       </div>
     </div>
-  </div>
+    </div>
 
   <!-- Add Column -->
    

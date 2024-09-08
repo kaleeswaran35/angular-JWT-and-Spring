@@ -4,6 +4,7 @@ import { UserService } from '../_services/user.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EditDialogComponent } from '../edit-dialog/edit-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { LoggerService } from '../_services/logger.services'
 
 
 
@@ -21,7 +22,8 @@ export class AddProductComponent {
     public dialogRef: MatDialogRef<EditDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public insertItem: Product,
     private fb: FormBuilder,
-    private userService: UserService
+    private userService: UserService,
+    private logger:LoggerService 
   ) {}
 
   ngOnInit(): void {
@@ -44,12 +46,16 @@ export class AddProductComponent {
       }
         this.userService.insertItem(insertProduct).subscribe(() => {
           this.dialogRef.close(true); // Close dialog and indicate success
+          this.logger.log('Product added Name:',insertProduct.productName); 
           next: () => {
-            console.log('Product added successfully:');
+            console.log(insertProduct);
+            
+            console.log('Product added successfully:');            
+           // Added logger to write in file        
             // Optionally, reset form or navigate to another page
           }},        
         (error) => {
-          console.error('Error updating item', error);
+          console.error('Error adding item', error);
         });    
   }
 

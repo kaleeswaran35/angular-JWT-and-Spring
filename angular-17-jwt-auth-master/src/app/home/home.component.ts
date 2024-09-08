@@ -3,12 +3,13 @@ import { Component, Injectable, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Product } from '../model/Product';
 import { UserService } from '../_services/user.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { EditDialogComponent } from '../edit-dialog/edit-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { AddProductComponent } from '../add-product/add-product.component'
 import { isEmpty, Observable } from 'rxjs';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { LoggerService } from '../_services/logger.services'
 
 @Component({
   selector: 'app-home',
@@ -39,12 +40,16 @@ export class HomeComponent implements OnInit {
   pageIndex = 0;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  isSearchDisabled: boolean | undefined;
+  isSearchDisabled: boolean | undefined;  
+  selectedItem = new FormControl('');
+  FilteredItems: any;
+  response: any;
+  uniqueItems: { term: unknown; }[] | undefined;
 
 
 
 
-  constructor(private userService: UserService, private fb: FormBuilder, public dialog: MatDialog) {
+  constructor(private userService: UserService, private fb: FormBuilder, public dialog: MatDialog,private logger:LoggerService) {
 
 
 
@@ -76,6 +81,8 @@ export class HomeComponent implements OnInit {
       pageIndex: 0, pageSize: this.pageSize,
       length: 0
     });
+
+    this.logger.info('Application started');
     //this.searchByDate();
   }
 
@@ -90,20 +97,44 @@ export class HomeComponent implements OnInit {
   getServerData(event: PageEvent): void {
     // Fetch data from the server based on the pagination event
     this.data$ = this.userService.getPublicContent(event);
-    console.log();
-    // Update length dynamically based on the response, if available
-    this.data$.subscribe(response => {
-      this.length = response.totalElements;
-      this.dataSource.data = response.content.sort((a: { productName: string; }, b: { productName: any; }) => a.productName.localeCompare(b.productName));
-      console.log(response); // Handle the data
-    }, error => {
-      console.error('Error fetching data:', error);
-    });
+  
+    // Subscribe to the observable
+    this.data$.subscribe(
+      (response) => {
+        // Debug: Log the entire response
+        this.logger.log('Fetched response:', JSON.stringify(response));
+  
+        // Ensure the response has the expected structure
+        if (response && Array.isArray(response.content)) {
+          // Debug: Log content before sorting
+          this.logger.log('Content before sorting:', JSON.stringify(response.content));
+  
+          // Update length dynamically based on the response
+          this.length = response.totalElements;
+  
+          // Sort the content by productName in a case-insensitive manner
+          const sortedData = response.content.sort((a: { productName: string }, b: { productName: string }) => {
+            const nameA = (a.productName || '').toLowerCase();
+            const nameB = (b.productName || '').toLowerCase();
+            return nameA.localeCompare(nameB);
+          });
+  
+          // Debug: Log the sorted content
+          this.logger.log('Content after sorting:', JSON.stringify(sortedData));
+  
+          // Update the dataSource with sorted data
+          this.dataSource.data = sortedData;
+        } else {
+          console.error('Response does not contain expected data structure.');
+        }
+      },
+      (error) => {
+        // Log error if data fetching fails
+        console.error('Error fetching data:', error);
+      }
+    );
   }
-
-
-
-
+  
   editItem(item: Product): void {
     this.editingItem = { ...item };
     // this.userService.updateItem(this.editingItem);
@@ -120,8 +151,7 @@ export class HomeComponent implements OnInit {
         () => {
           //
           this.editingItem = null;
-          this.editform.reset();
-          alert('Product Updated');
+          this.editform.reset();          
           this.ngOnInit();
         },
         (error) => {
@@ -135,6 +165,7 @@ export class HomeComponent implements OnInit {
     if (this.searchQuery.trim()) {
       this.userService.getsearchContent(this.searchQuery).subscribe(
         (response: Product[]) => {
+          this.logger.log(' Searched Product Name:', JSON.stringify(this.searchQuery));
           this.dataSource.data = response;
         },
         (error) => {
@@ -150,6 +181,7 @@ export class HomeComponent implements OnInit {
     this.searchQuery = '';
     this.startDate = null;
     this.endDate = null;
+    this.uniqueItems = [];
     this.ngOnInit(); // Reset search
   }
 
@@ -173,7 +205,7 @@ export class HomeComponent implements OnInit {
 
   onDelete(id: string): void {
     if (confirm('Are you sure you want to delete this item?')) {
-      console.log(id, "id");
+      this.logger.log(id, "id");
       this.userService.deleteItem(id).subscribe({
         next: () => {
           // Handle successful deletion, e.g., refresh the table data
@@ -225,7 +257,7 @@ export class HomeComponent implements OnInit {
         response => {
           this.length = response.totalElements;
           this.dataSource.data = response.content.sort((a: { productName: string }, b: { productName: string }) => a.productName.localeCompare(b.productName));
-          console.log(response);
+          this.logger.info(response);
         });
       }else {
         // Reset or fetch full data if search criteria is empty
@@ -238,9 +270,38 @@ export class HomeComponent implements OnInit {
           response => {
             this.length = response.totalElements;
             this.dataSource.data = response.content.sort((a: { productName: string }, b: { productName: string }) => a.productName.localeCompare(b.productName));
-            console.log(response);
+            this.logger.info(response);
           });}              
-    }    
+    }  
+    
+    loadRecentSearchResults(event: any): void {
+      this.userService.getRecentSearchResults(event).subscribe(
+        (data) => {
+          this.response = data;
+          this.FilteredItems = data; 
+          this.uniqueItems = Array.from(new Set(this.FilteredItems.map((item: { term: any; }) => item.term)))
+                              .map(term => ({ term }));       
+        },
+        (error) => {
+          console.error('Error fetching recent search results', error);
+        }
+      );
+    }
+
+    addsearchTerm(term: string): void
+    {      
+      this.userService.addSearchTerm(term).subscribe(
+        (data) => {
+          this.addsearchTerm = data; 
+                          
+        },
+        (error) => {
+          console.error('Error fetching recent search results', error);
+        }
+      );
+    }
+
+    
   }
 
 
