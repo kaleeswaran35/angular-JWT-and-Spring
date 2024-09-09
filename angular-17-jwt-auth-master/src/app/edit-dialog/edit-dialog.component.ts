@@ -36,7 +36,7 @@ export class EditDialogComponent implements OnInit {
 
   save(): void {
     if (this.editform.valid) {
-      const updatedProduct: Product = {
+      var updatedProduct: Product = {
         ...this.editingItem,
         ...this.editform.value
       };

@@ -1,40 +1,37 @@
-// server.js
 const express = require('express');
-const cors = require('cors');
 const bodyParser = require('body-parser');
-const fs = require('fs');
-const path = require('path');
+const { Client } = require('@elastic/elasticsearch');
+
 const app = express();
 const port = 3000;
+const cors = require('cors');
 
-// Log file path
-const logFilePath = path.join(__dirname, 'app.log');
-const logFileStream = fs.createWriteStream(logFilePath, { flags: 'a' });
+// Create an Elasticsearch client
+const client = new Client({ node: 'http://localhost:9200' });
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
 
-// Log endpoint
-app.post('/log', (req, res) => {
-  const { level, message } = req.body;
-  if (!level || !message) {
-    return res.status(400).send('Invalid log message');
-  }
-  const logMessage = `${new Date().toISOString()} [${level.toUpperCase()}] ${message}\n`;
-  logFileStream.write(logMessage);
-  res.status(200).send(logMessage);
-});
+// POST endpoint to receive logs
+app.post('/api/logs', async (req, res) => {
+  const log = req.body;
 
-// Retrieve logs endpoint
-app.get('/logs', (req, res) => {
-  fs.readFile(logFilePath, 'utf8', (err, data) => {
-    if (err) {
-      console.error('Error reading log file:', err);
-      return res.status(500).send('Error reading log file');
-    }
-    res.status(200).send(data);
-  });
+  try {
+    await client.index({
+      index: 'angular-logs',
+      body: {
+        '@timestamp': new Date().toISOString(),
+        level: log.level,
+        message: log.message,
+        meta: log.meta || {}
+      }
+    });
+    res.status(200).send('Log added');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error adding log');
+  }
 });
 
 app.listen(port, () => {

@@ -1,33 +1,22 @@
-// src/app/services/logger.service.ts
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
+import axios from 'axios';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoggerService {
-  private apiUrl = `http://localhost:3000/log`; // Use the correct backend URL and endpoint
 
-  constructor(private http: HttpClient) {}
+  private apiUrl = 'http://localhost:3000/api/logs'; // Your backend API endpoint
 
-  log(level: string, message: string): void {
-    this.http.post(this.apiUrl, { level, message })
-      .subscribe({
-        next: () => console.log('Log sent successfully'),
-       // error: (err) => this.log('Error sending log', err)
+  constructor() { }
+
+  log(level: string, message: string, meta: any = {}) {
+    axios.post(this.apiUrl, { level, message, meta })
+      .then(response => {
+        console.log('Log sent successfully');
+      })
+      .catch(error => {
+        console.error('Error sending log:', error);
       });
-  }
-
-  info(message: string): void {
-    this.log('info', message);
-  }
-
-  warn(message: string): void {
-    this.log('warn', message);
-  }
-
-  error(message: string): void {
-    this.log('error', message);
   }
 }

@@ -82,7 +82,7 @@ export class HomeComponent implements OnInit {
       length: 0
     });
 
-    this.logger.info('Application started');
+    
     //this.searchByDate();
   }
 
@@ -257,7 +257,7 @@ export class HomeComponent implements OnInit {
         response => {
           this.length = response.totalElements;
           this.dataSource.data = response.content.sort((a: { productName: string }, b: { productName: string }) => a.productName.localeCompare(b.productName));
-          this.logger.info(response);
+          this.logger.log('searched Product', JSON.stringify(response.content));
         });
       }else {
         // Reset or fetch full data if search criteria is empty
@@ -270,7 +270,7 @@ export class HomeComponent implements OnInit {
           response => {
             this.length = response.totalElements;
             this.dataSource.data = response.content.sort((a: { productName: string }, b: { productName: string }) => a.productName.localeCompare(b.productName));
-            this.logger.info(response);
+            this.logger.log('searched Product', JSON.stringify(response.content));
           });}              
     }  
     
