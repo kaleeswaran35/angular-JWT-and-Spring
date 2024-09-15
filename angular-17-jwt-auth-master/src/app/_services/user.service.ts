@@ -5,7 +5,6 @@ import { Product } from '../model/Product';
 import { PageEvent } from '@angular/material/paginator';
 import { LoggerService } from './logger.services';
 
-
 const API_URL = 'http://localhost:8080/';
 
 const httpOptions = {
@@ -20,6 +19,7 @@ const httpOptions = {
 })
 export class UserService {
   
+
 
   constructor(private http: HttpClient,private logger: LoggerService) { }
 
@@ -75,6 +75,13 @@ export class UserService {
 
   getRecentSearchResults(event: any): Observable<any>{       
     return this.http.get<any>(API_URL + 'recent-searches');
+  }
+
+  getPieChartData(pageIndex: number, pageSize: number): Observable<any> {  
+    let params = new HttpParams()      
+      .set('page', pageIndex.toString())
+      .set('size', pageSize.toString())   
+    return this.http.get<any>(`${API_URL}chartdata`, { params });
   }
 
 }

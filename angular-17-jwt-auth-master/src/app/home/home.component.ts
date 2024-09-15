@@ -9,7 +9,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { AddProductComponent } from '../add-product/add-product.component'
 import { isEmpty, Observable } from 'rxjs';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { LoggerService } from '../_services/logger.services'
+import { LoggerService } from '../_services/logger.services';
+import { EChartsOption } from 'echarts';
+import { axisRight } from 'd3';
+//import { index } from 'angular-17-jwt-auth-master/src/index.js';
+
+
 
 @Component({
   selector: 'app-home',
@@ -20,6 +25,8 @@ import { LoggerService } from '../_services/logger.services'
 @Injectable({
   providedIn: 'root',
 })
+
+
 export class HomeComponent implements OnInit {
   displayedColumns: string[] = ['productName', 'qty', 'price', 'actions', 'Delete'];
   dataSource = new MatTableDataSource<Product>([]);
@@ -44,13 +51,20 @@ export class HomeComponent implements OnInit {
   selectedItem = new FormControl('');
   FilteredItems: any;
   response: any;
-  uniqueItems: { term: unknown; }[] | undefined;
-
+  uniqueItems: { term: unknown; }[] | undefined; 
+  chart:  any; 
+  public chartOption: EChartsOption | any;
+  value: any;
+  totalPages: any;
+  
+  
+ 
 
 
 
   constructor(private userService: UserService, private fb: FormBuilder, public dialog: MatDialog,private logger:LoggerService) {
 
+    
 
 
     this.editform = this.fb.group({
@@ -68,9 +82,7 @@ export class HomeComponent implements OnInit {
       endDate: [new Date().toISOString().split('T')[0]]
     });
 
-    // Default to one month later
-
-
+    // Default to one month later   
 
   }
 
@@ -80,11 +92,77 @@ export class HomeComponent implements OnInit {
     this.getServerData({
       pageIndex: 0, pageSize: this.pageSize,
       length: 0
+
+          
     });
 
+    this.loadPieChartData();
+
     
-    //this.searchByDate();
   }
+  
+  loadPieChartData(): void {
+    this.userService.getPieChartData(this.pageIndex, this.pageSize).subscribe(
+      data => {
+        // Update chart data
+        this.chartOption = {
+          title: {
+            text: 'Product Quantities',
+            left: 'center'
+          },
+          tooltip: {
+            trigger: 'item',
+            formatter: '{b}: {c} ({d}%)'
+          },
+          legend: {
+            orient: 'vertical',
+            left: 'left'
+          },
+          series: [
+            {
+              name: 'Product',
+              type: 'pie',
+              radius: ['50%', '70%'], // Adjusted radius for a more typical pie chart
+              data: data.content.map((item: any) => ({
+                value: item.qty, // Set the value to the quantity
+                name: item.productName // Set the name to the product name
+              })),
+              emphasis: {
+                itemStyle: {
+                  shadowBlur: 10,
+                  shadowOffsetX: 0,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+              }
+            }
+          ]
+        };
+        
+        // Update pagination info if provided
+        this.totalPages = data.totalPages;
+      },
+      error => {
+        console.error('Error fetching chart data', error);
+      }
+    );
+  }
+
+  // Method to load the next page
+  loadNextPage(): void {
+    if (this.pageIndex < this.totalPages - 1) {
+      this.pageIndex++;
+      this.loadPieChartData();
+    }
+  }
+
+  // Method to load the previous page
+  loadPreviousPage(): void {
+    if (this.pageIndex > 0) {
+      this.pageIndex--;
+      this.loadPieChartData();
+    }
+  }
+    
 
   onDateChange() {
     this.checkSearchButtonState();
@@ -303,6 +381,7 @@ export class HomeComponent implements OnInit {
 
     
   }
+
 
 
 

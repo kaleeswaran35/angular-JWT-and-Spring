@@ -148,4 +148,35 @@ button {
   overflow: auto;    /* Enable scrollbars if content exceeds the maximum height */
 }
 
+.demo-chart {
+  height: 400px;
+}
+
+/* pie-chart.component.css */
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination-button {
+  background: none;
+  border: none;
+  font-size: 24px; /* Adjust the size of the icons */
+  color: #1d1375; /* Change to desired color */
+  cursor: pointer;
+  margin: 0 10px; /* Adjust spacing between buttons */
+}
+
+.pagination-button:disabled {
+  color: #ccc; /* Change color for disabled state */
+  cursor: not-allowed;
+}
+
+.pagination-button:hover:not(:disabled) {
+  color: #0056b3; /* Change color on hover */
+}
+
+
+
 

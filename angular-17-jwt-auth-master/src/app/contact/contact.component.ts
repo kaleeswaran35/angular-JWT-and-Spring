@@ -1,4 +1,6 @@
+import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 @Component({
@@ -7,12 +9,24 @@ import { Router } from '@angular/router';
   styleUrls: ['./contact.component.css']
 })
 export class ContactComponent {
+  contactForm: FormGroup | any;
+  constructor(private router: Router,private fb: FormBuilder, private http: HttpClient) {
 
-  constructor(private router: Router) {}
+    this.contactForm = this.fb.group({
+      name: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      message: ['', Validators.required]
+    });
+
+  }
 
   onSubmit(): void {
-    // Handle form submission, e.g., send form data to a server
-    alert('Form submitted!');
+    if (this.contactForm.valid) {
+      this.http.post('http://localhost:3000/api/contact', this.contactForm.value)
+        .subscribe(response => {
+          // Handle the response (e.g., show a success message)
+        });
+    }
   }
 
   goHome(): void {

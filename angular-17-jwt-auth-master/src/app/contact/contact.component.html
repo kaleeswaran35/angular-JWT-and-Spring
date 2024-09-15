@@ -10,20 +10,17 @@
     <h1>Contact Us</h1>
     <p>If you have any questions, feel free to reach out to us using the form below:</p>
   
-    <form (ngSubmit)="onSubmit()" #contactForm="ngForm">
-      <div>
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" ngModel required>
-      </div>
-      <div>
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" ngModel required>
-      </div>
-      <div>
-        <label for="message">Message:</label>
-        <textarea id="message" name="message" ngModel required></textarea>
-      </div>
-      <button type="submit" [disabled]="!contactForm.form.valid">Send</button>
+    <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+      <label for="name">Name:</label>
+      <input id="name" formControlName="name" required>
+      
+      <label for="email">Email:</label>
+      <input id="email" formControlName="email" type="email" required>
+      
+      <label for="message">Message:</label>
+      <textarea id="message" formControlName="message" required></textarea>
+      
+      <button type="submit" [disabled]="contactForm.invalid">Send</button>
     </form>
   
     <p>Alternatively, you can reach us at:</p>

@@ -6,6 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Product Management</title>
   <link rel="stylesheet" href="home.component.css"> <!-- Link to your CSS file -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
 </head>
 
 <app-clock></app-clock>
@@ -114,13 +116,39 @@
       <mat-paginator [pageSizeOptions]="[10]" [pageSize]="pageSize" [length]="length"
         (page)="getServerData($event)" showFirstLastButtons = true>
       </mat-paginator>
-
     </div>
   </div>
+  
 
-  <!-- Angular Material Dialog is not directly placed in HTML -->
-  <!-- It will be triggered by the 'openEditDialog' method in your TypeScript code -->
+  <!-- pie-chart.component.html -->
+<!-- pie-chart.component.html -->
+<div class="chart-wrapper">
+  <div class="chart-container">
+    <div class="pie-chart" echarts [options]="chartOption"></div>
+    <div class="pagination-controls">
+      <button (click)="loadPreviousPage()" [disabled]="pageIndex === 0" class="pagination-button">
+        <i class="material-icons">arrow_back</i> <!-- Material Icons left arrow -->
+      </button>
+      <button (click)="loadNextPage()" [disabled]="pageIndex >= totalPages - 1" class="pagination-button">
+        <i class="material-icons">arrow_forward</i> <!-- Material Icons right arrow -->
+      </button>
+    </div>
+  </div>
+</div>
+
+
+  
 
 </body>
+
+    
+  <!-- Angular Material Dialog is not directly placed in HTML -->
+  <!-- It will be triggered by the 'openEditDialog' method in your TypeScript code -->
+  
+  
+
+
+
+
 
 </html>

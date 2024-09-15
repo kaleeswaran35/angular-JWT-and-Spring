@@ -1,33 +1,33 @@
 <div class="login-container">
-<form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-card">
-  <!-- Username Field -->
-  <div class="form-group">
-    <label for="username">Username <br></label>
-    <input id="username" formControlName="username" type="text" class="form-control" />
-    <div *ngIf="loginForm.get('username').invalid && (loginForm.get('username').dirty || loginForm.get('username').touched)" class="error-message">
-      <div *ngIf="loginForm.get('username').errors?.['required']">Username is required.</div>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-card">
+    <!-- Username Field -->
+    <div class="form-group">
+      <label for="username">Username <br></label>
+      <input id="username" formControlName="username" type="text" class="form-control" />
+      <div *ngIf="loginForm.get('username').invalid && (loginForm.get('username').dirty || loginForm.get('username').touched)" class="error-message">
+        <div *ngIf="loginForm.get('username').errors?.['required']">Username is required.</div>
+      </div>
     </div>
-  </div>
-
-  <!-- Password Field -->
-  <div class="form-group">
-    <label for="password">Password<br></label>
-    <input id="password" formControlName="password" type="password" class="form-control" />
-    <div *ngIf="loginForm.get('password').invalid && (loginForm.get('password').dirty || loginForm.get('password').touched)" class="error-message">
-      <div *ngIf="loginForm.get('password').errors?.['required']">Password is required.</div>
+  
+    <!-- Password Field -->
+    <div class="form-group">
+      <label for="password">Password<br></label>
+      <input id="password" formControlName="password" type="password" class="form-control" />
+      <div *ngIf="loginForm.get('password').invalid && (loginForm.get('password').dirty || loginForm.get('password').touched)" class="error-message">
+        <div *ngIf="loginForm.get('password').errors?.['required']">Password is required.</div>
+      </div>
     </div>
+  
+    <!-- Error Message -->
+    <div *ngIf="isLoginFailed" class="error-message">
+      {{ errorMessage }}
+    </div>
+  
+    <!-- Button Group -->
+    <div class="button-group">
+      <button type="submit" class="btn btn-primary">
+        Login
+      </button>
+    </div>
+  </form>
   </div>
-
-  <!-- Error Message -->
-  <div *ngIf="isLoginFailed" class="error-message">
-    {{ errorMessage }}
-  </div>
-
-  <!-- Button Group -->
-  <div class="button-group">
-    <button type="submit" class="btn btn-primary">
-      Login
-    </button>
-  </div>
-</form>
-</div>

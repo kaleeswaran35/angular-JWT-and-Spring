@@ -35,7 +35,10 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatListModule } from '@angular/material/list'
+import { MatListModule } from '@angular/material/list';
+import { NgxEchartsModule } from 'ngx-echarts';
+import * as echarts from 'echarts';
+
 
 @NgModule({
   declarations: [
@@ -49,7 +52,8 @@ import { MatListModule } from '@angular/material/list'
     ContactComponent,
     AboutComponent,
     AddProductComponent,
-    ClockComponent   
+    ClockComponent,   
+    
     
   ],
   imports: [
@@ -74,7 +78,9 @@ import { MatListModule } from '@angular/material/list'
     MatNativeDateModule,
     MatPaginatorModule,
     MatAutocompleteModule,
-    MatListModule          
+    MatListModule,
+    NgxEchartsModule.forRoot({ echarts })
+               
     
   ],
   providers: [
