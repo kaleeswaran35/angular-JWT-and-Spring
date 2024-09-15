@@ -6,8 +6,10 @@ package com.javatechie.jpa.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.javatechie.jpa.dto.PaginatedResponse;
+import com.javatechie.jpa.entity.PieChart;
 import com.javatechie.jpa.entity.Product;
 import com.javatechie.jpa.repository.ProductRepository;
+import com.javatechie.jpa.repository.chartRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +30,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.data.domain.Page;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 /**
  *
@@ -39,6 +42,9 @@ public class ProductController {
 
     @Autowired
     private ProductRepository productRepository;
+    
+    @Autowired
+    private chartRepository chartRepo;
 
     @Autowired
     RestTemplate restTemplate;
@@ -75,6 +81,24 @@ public class ProductController {
         return product_list;
 
     }
+    
+      @GetMapping("/chartdata")
+    public PaginatedResponse<PieChart> getChartData(@RequestParam int page,
+            @RequestParam int size) {
+        
+        // Validate and set default values if needed
+       Page<PieChart> chartPage = chartRepo.chartdata(PageRequest.of(page, size));
+
+        PaginatedResponse<PieChart> response = new PaginatedResponse<>();
+        response.setContent(chartPage.getContent());
+        response.setPage(page);
+        response.setSize(size);
+        response.setTotalElements(chartPage.getTotalElements());
+        response.setTotalPages(chartPage.getTotalPages());
+
+        return response;
+    }
+
 
     @PutMapping("/update/{id}")
     public Product update(@PathVariable Integer id, @RequestBody Product Productdetails) throws Exception, Throwable {

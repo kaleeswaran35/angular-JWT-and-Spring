@@ -1,0 +1,50 @@
+.login-container {
+  display: flex;
+  justify-content: center; /* Horizontally center */
+  align-items: center; /* Vertically center */
+  height: 100vh; /* Full viewport height */
+}
+
+
+/* Styles for the button group */
+.button-group {
+  margin-top: 20px;
+  display: flex; /* Flex layout for button alignment */
+  justify-content: space-between; /* Space buttons evenly */
+}
+
+/* Styles for error messages */
+.error-message {
+  color: red;
+  margin-top: 10px;
+  font-size: 0.875em; /* Slightly smaller font size for error messages */
+  font-weight: 400; /* Normal font weight */
+}
+
+/* src/app/login/login.component.css */
+.login-card {
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #e0e0e0; /* Background color */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  border: 1px solid #e0e0e0; /* Light border */
+  font-family: 'Arial', sans-serif; /* Change the font family */
+  font-size: 16px; /* Change the font size */
+  color: #333; /* Change the text color */
+}
+
+/* Additional styling for form elements within the card */
+.login-card h2 {
+  font-family: 'Verdana', sans-serif; /* Different font for headings */
+  font-size: 24px; /* Heading font size */
+  font-weight: bold; /* Bold heading */
+  color: #444; /* Heading color */
+}
+
+.login-card input,
+.login-card button {
+  font-family: 'Arial', sans-serif; /* Consistent font for inputs and buttons */
+  font-size: 16px; /* Font size for form elements */
+}

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Management</title>
+  <link rel="stylesheet" href="home.component.css"> <!-- Link to your CSS file -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+</head>
+
+<app-clock></app-clock>
+
+
+
+<body>
+  <div class="header-container">
+    <div class="date-search">
+      <mat-form-field appearance="fill">
+        <mat-label>Start Date</mat-label>
+        <input matInput [matDatepicker]="startPicker" [(ngModel)]="startDate" placeholder="Choose a date" (dateChange)="onDateChange()" >
+        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>End Date</mat-label>
+        <input matInput [matDatepicker]="endPicker" [(ngModel)]="endDate" placeholder="Choose a date" (dateChange)="onDateChange()">
+        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+      &nbsp; 
+      <button mat-raised-button color="primary" (click)="searchByDate()" [disabled]="isSearchDisabled">Search</button>
+      &nbsp;
+      <button mat-raised-button color="primary" (click)="clear()">Clear</button>
+    </div>
+
+    <!-- Search Bar Container -->
+    <div class="search-container">
+      <div class="search-bar">
+        <mat-form-field appearance="fill">
+          <input matInput [(ngModel)]="searchQuery" (input)="search()" (click)="loadRecentSearchResults($event)"
+            placeholder="Search by Name" (input)="addsearchTerm(searchQuery)">                    
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-select placeholder="Recent searches">
+            <mat-option *ngFor="let item of uniqueItems" [value]="item.term">
+              {{ item.term }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="clear()">Clear</button>
+      </div>
+    </div>
+    </div>
+
+  <!-- Add Column -->
+   
+ 
+
+  <!-- Product Table -->
+  <div class="parent-container">
+    <div class="table-container">
+      <div class="button-container">
+        <button mat-raised-button color="primary" (click)="openAddProductDialog()">
+          Add Product
+        </button>
+      </div>    
+      <mat-table [dataSource]="dataSource">
+
+        <!-- Product Name Column -->
+        <ng-container matColumnDef="productName">
+          <th mat-header-cell *matHeaderCellDef> Product Name </th>
+          <td mat-cell *matCellDef="let element"> {{element.productName}} </td>
+        </ng-container>
+
+        <!-- Quantity Column -->
+        <ng-container matColumnDef="qty">
+          <th mat-header-cell *matHeaderCellDef> Quantity </th>
+          <td mat-cell *matCellDef="let element"> {{element.qty}} </td>
+        </ng-container>
+
+        <!-- Price Column -->
+        <ng-container matColumnDef="price">
+          <th mat-header-cell *matHeaderCellDef> Price </th>
+          <td mat-cell *matCellDef="let element"> {{element.price}} </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef> Actions </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button color="primary" (click)="openEditDialog(element)">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <!-- Delete Column -->
+        <ng-container matColumnDef="Delete">
+          <th mat-header-cell *matHeaderCellDef> Delete </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button color="warn" (click)="onDelete(element.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+
+        <!-- Table Header and Rows -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </mat-table>
+
+      <mat-paginator [pageSizeOptions]="[10]" [pageSize]="pageSize" [length]="length"
+        (page)="getServerData($event)" showFirstLastButtons = true>
+      </mat-paginator>
+    </div>
+  </div>
+  
+
+  <!-- pie-chart.component.html -->
+<!-- pie-chart.component.html -->
+<div class="chart-wrapper">
+  <div class="chart-container">
+    <div class="pie-chart" echarts [options]="chartOption"></div>
+    <div class="pagination-controls">
+      <button (click)="loadPreviousPage()" [disabled]="pageIndex === 0" class="pagination-button">
+        <i class="material-icons">arrow_back</i> <!-- Material Icons left arrow -->
+      </button>
+      <button (click)="loadNextPage()" [disabled]="pageIndex >= totalPages - 1" class="pagination-button">
+        <i class="material-icons">arrow_forward</i> <!-- Material Icons right arrow -->
+      </button>
+    </div>
+  </div>
+</div>
+
+
+  
+
+</body>
+
+    
+  <!-- Angular Material Dialog is not directly placed in HTML -->
+  <!-- It will be triggered by the 'openEditDialog' method in your TypeScript code -->
+  
+  
+
+
+
+
+
+</html>

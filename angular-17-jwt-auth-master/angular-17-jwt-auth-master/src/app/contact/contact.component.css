@@ -1,0 +1,53 @@
+/* src/app/contact/contact.component.css */
+.contact {
+    padding: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  form div {
+    margin-bottom: 1rem;
+  }
+  
+  label {
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  
+  input, textarea {
+    width: 100%;
+    padding: 0.5rem;
+    box-sizing: border-box;
+  }
+  
+  button {
+    padding: 0.5rem;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+  }
+  
+  button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+  }
+  
+  address {
+    margin-top: 1rem;
+  }
+
+  /* Add this to app.component.css or a global stylesheet */
+.back-to-home-button {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 1000; /* Ensures the button is on top of other elements */
+}
+
+  

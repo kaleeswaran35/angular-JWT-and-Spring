@@ -1,6 +1,7 @@
 package com.javatechie.jpa.repository;
 
 import com.javatechie.jpa.entity.Product;
+import com.javatechie.jpa.entity.PieChart;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +24,8 @@ public interface ProductRepository extends JpaRepository<Product,Integer> {
     
      //@Query(value = "select * from product where product_name =:product_name",nativeQuery = true)
 
+    
+    
     /**
      *
      * @param id

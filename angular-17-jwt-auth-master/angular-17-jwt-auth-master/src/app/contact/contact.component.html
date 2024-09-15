@@ -1,0 +1,31 @@
+<!-- src/app/contact/contact.component.html -->
+<section class="contact">
+
+  <div class="back-to-home-button">
+    <button mat-raised-button color="primary" (click)="goHome()">
+      Back to Home
+    </button>
+  </div>
+
+    <h1>Contact Us</h1>
+    <p>If you have any questions, feel free to reach out to us using the form below:</p>
+  
+    <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+      <label for="name">Name:</label>
+      <input id="name" formControlName="name" required>
+      
+      <label for="email">Email:</label>
+      <input id="email" formControlName="email" type="email" required>
+      
+      <label for="message">Message:</label>
+      <textarea id="message" formControlName="message" required></textarea>
+      
+      <button type="submit" [disabled]="contactForm.invalid">Send</button>
+    </form>
+  
+    <p>Alternatively, you can reach us at:</p>
+    <address>
+      <p>Email: contact&#64;company.com</p>      
+    </address>
+  </section>
+  

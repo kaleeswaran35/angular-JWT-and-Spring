@@ -1,0 +1,38 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensures the container takes up at least the full viewport height */
+}
+
+.content {
+  flex: 1; /* Allows content to grow and shrink as needed */
+}
+
+.form-group {
+  margin-bottom: 40px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 100px;
+  box-sizing: border-box;
+}
+
+.btn {
+  margin-top: 100px;
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+}
+
+main {
+  min-height: calc(100vh - 80px); /* Adjust based on header/footer height */
+}
