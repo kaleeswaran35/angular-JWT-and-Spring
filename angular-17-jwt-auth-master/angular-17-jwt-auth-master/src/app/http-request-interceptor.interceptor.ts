@@ -14,9 +14,10 @@ export class httpRequestInterceptorInterceptor implements HttpInterceptor {
     return from(this.tokenService.getToken()).pipe(
       switchMap(token => {
         // Clone the request and add the Authorization header
-        const isAuthRequest = req.url.includes('/login') || req.url.includes('/authenticate')  || req.url.includes('/home')       
+        const isAuthRequest = req.url.includes('/login') || req.url.includes('/authenticate')  || req.url.includes('/home')         
         if(!isAuthRequest)
         {
+          console.log("inteceptor Invoked",isAuthRequest);
           return  this.tokenService.getToken().pipe(
             switchMap(token => {
               if(typeof token === 'string' && token)
@@ -47,7 +48,7 @@ export class httpRequestInterceptorInterceptor implements HttpInterceptor {
         //     Authorization: `Bearer ${token}`
         //   }
         // });
-        console.log("inteceptor handling next request");
+        console.log("inteceptor handling next request"+ req.url);
         return next.handle(req).pipe(          
           catchError((error: HttpErrorResponse) => {
             if (error.status === 401) {

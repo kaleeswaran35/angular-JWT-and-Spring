@@ -16,7 +16,7 @@ public interface ProductRepository extends JpaRepository<Product,Integer> {
 
     
     @Retryable(value = {IOException.class}, maxAttempts = 3, backoff = @Backoff(delay = 1000))
-    public Product save(Integer pid) throws Exception;
+    public Product save(String pro) throws Exception;
       
     
     @Query(value = "select * from product where product_name =:product_name",nativeQuery = true)
@@ -48,6 +48,8 @@ public interface ProductRepository extends JpaRepository<Product,Integer> {
     Page<Product> findEventsByDateRange(String start_date,String end_date, Pageable pageable);
     
     @Query(value = "select * from Product WHERE end_date =:end_date",nativeQuery = true)
-    List<Product> findTop10ByTimestampBeforeOrderByTimestampDesc(String end_date);    
+    List<Product> findTop10ByTimestampBeforeOrderByTimestampDesc(String end_date);  
+    
+    void deleteById(Long id);
             
 }

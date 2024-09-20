@@ -5,6 +5,9 @@
 package com.javatechie.jpa.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.javatechie.exception.InsufficientQuantityException;
+import com.javatechie.exception.ResourceNotFoundException;
 import com.javatechie.jpa.dto.PaginatedResponse;
 import com.javatechie.jpa.entity.PieChart;
 import com.javatechie.jpa.entity.Product;
@@ -13,6 +16,8 @@ import com.javatechie.jpa.repository.chartRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.LockModeType;
+import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +36,9 @@ import org.springframework.data.domain.Page;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.http.HttpEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 
 /**
  *
@@ -42,7 +50,7 @@ public class ProductController {
 
     @Autowired
     private ProductRepository productRepository;
-    
+
     @Autowired
     private chartRepository chartRepo;
 
@@ -81,13 +89,13 @@ public class ProductController {
         return product_list;
 
     }
-    
-      @GetMapping("/chartdata")
+
+    @GetMapping("/chartdata")
     public PaginatedResponse<PieChart> getChartData(@RequestParam int page,
             @RequestParam int size) {
-        
+
         // Validate and set default values if needed
-       Page<PieChart> chartPage = chartRepo.chartdata(PageRequest.of(page, size));
+        Page<PieChart> chartPage = chartRepo.chartdata(PageRequest.of(page, size));
 
         PaginatedResponse<PieChart> response = new PaginatedResponse<>();
         response.setContent(chartPage.getContent());
@@ -98,7 +106,6 @@ public class ProductController {
 
         return response;
     }
-
 
     @PutMapping("/update/{id}")
     public Product update(@PathVariable Integer id, @RequestBody Product Productdetails) throws Exception, Throwable {
@@ -167,10 +174,55 @@ public class ProductController {
 
         return response;
     }
-    
+
     @GetMapping("/recent/search")
-    public List<Product> getRecentSearchResults(@RequestParam("todayDate") String start_date) {        
+    public List<Product> getRecentSearchResults(@RequestParam("todayDate") String start_date) {
         return productRepository.findTop10ByTimestampBeforeOrderByTimestampDesc(start_date);
     }
-}
 
+    @Transactional
+    @Lock(LockModeType.OPTIMISTIC)
+    @PutMapping("/purchase/{productName}")
+    public void decreaseProductQuantity(@RequestBody Product purchaseProduct) throws Exception {
+        // Validate the incoming product
+        if (purchaseProduct.getQty() <= 0) {
+            throw new IllegalArgumentException("Quantity must be greater than zero.");
+        }
+
+        // Fetch the product by name
+        List<Product> optionalProduct = productRepository.findAll(purchaseProduct.getProductName());
+
+        Product existingProduct = optionalProduct.get(0);
+
+        Integer remainingPrice = calculateDiscount(purchaseProduct.getQty(), purchaseProduct.getPrice(), existingProduct);
+        existingProduct.setPrice(remainingPrice);
+
+        // Check for sufficient quantity
+        if (existingProduct.getQty() < purchaseProduct.getQty()) {
+            throw new InsufficientQuantityException("Insufficient quantity for product: " + purchaseProduct.getProductName());
+        }
+
+        // Decrease the quantity
+        existingProduct.setQty(existingProduct.getQty() - purchaseProduct.getQty());
+
+        // Calculate the remaining price after discount
+        // Save the updated product
+        productRepository.save(existingProduct);
+    }
+
+    private Integer calculateDiscount(int quantity, Integer price, Product existingProduct) {
+        // Calculate the price per item
+        Integer singlePrice = price / existingProduct.getQty();
+        Integer sellingPrice = quantity * singlePrice;
+        // Calculate remaining price
+        Integer remainingPrice = price - sellingPrice;
+
+        // Ensure remaining price is not negative
+        if (remainingPrice < 0) {
+            throw new IllegalArgumentException("Price cannot be reduced below zero.");
+        }
+
+        return remainingPrice;
+    }
+
+}

@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.Version;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.FieldNameConstants;
+import org.hibernate.annotations.Check;
 import org.springframework.scheduling.annotation.Async;
 
 @Data
@@ -25,6 +26,7 @@ public class Product {
     @GeneratedValue
     private Integer id;
     private String productName;
+    @Check(constraints = "qty >= 0")
     private Integer qty;
     private Integer price;  
     private LocalDate startDate;
