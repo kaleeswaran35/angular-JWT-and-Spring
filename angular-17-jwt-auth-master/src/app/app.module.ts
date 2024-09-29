@@ -36,8 +36,11 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatListModule } from '@angular/material/list';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NgxEchartsModule } from 'ngx-echarts';
 import * as echarts from 'echarts';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { PurchaseDialogComponent } from './purchase-dialog/purchase-dialog.component';
 
 
 @NgModule({
@@ -52,7 +55,8 @@ import * as echarts from 'echarts';
     ContactComponent,
     AboutComponent,
     AddProductComponent,
-    ClockComponent,   
+    ClockComponent,    
+    PurchaseDialogComponent,   
     
     
   ],
@@ -79,6 +83,7 @@ import * as echarts from 'echarts';
     MatPaginatorModule,
     MatAutocompleteModule,
     MatListModule,
+    MatProgressSpinnerModule,
     NgxEchartsModule.forRoot({ echarts })
                
     
@@ -87,6 +92,7 @@ import * as echarts from 'echarts';
     { 
       provide: HTTP_INTERCEPTORS, useClass: httpRequestInterceptorInterceptor, multi:true
     },
+    provideAnimationsAsync(),
 ],
   bootstrap: [AppComponent],
   // entryComponents: [EditProductDialogComponent]

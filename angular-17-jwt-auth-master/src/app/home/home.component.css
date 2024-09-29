@@ -74,8 +74,8 @@
 }
 
 .mat-icon-button {
-  width: 70px; /* Set a specific width for the button */
-  height: 70px; /* Set a specific height for the button */
+  width: 100px; /* Set a specific width for the button */
+  height: 100px; /* Set a specific height for the button */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -84,8 +84,9 @@
 
 /* Make sure mat-icon is visible inside the button */
 .mat-icon {
-  font-size: 8px; /* Set the icon size */
-  color: #000; /* Set icon color to black or adjust as needed */
+  font-size: 24px; /* Set the icon size to be larger */
+  color: #000; /* Set the icon color to black or adjust as needed */
+  vertical-align: middle; /* Align the icon in the middle of text, if necessary */
 }
 
 /* Optionally, provide background and color for button if needed */
@@ -175,6 +176,24 @@ button {
 
 .pagination-button:hover:not(:disabled) {
   color: #0056b3; /* Change color on hover */
+}
+
+mat-card {
+  margin: 16px;
+  padding: 16px;
+}
+
+mat-spinner {
+  display: block;
+  margin: auto;
+}
+
+mat-icon {
+  font-size: 2em;
+}
+
+p {
+  margin: 16px 0;
 }
 
 

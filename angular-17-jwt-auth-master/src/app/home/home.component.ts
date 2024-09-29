@@ -12,6 +12,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { LoggerService } from '../_services/logger.services';
 import { EChartsOption } from 'echarts';
 import { axisRight } from 'd3';
+import { PurchaseDialogComponent } from '../purchase-dialog/purchase-dialog.component';
 //import { index } from 'angular-17-jwt-auth-master/src/index.js';
 
 
@@ -28,7 +29,7 @@ import { axisRight } from 'd3';
 
 
 export class HomeComponent implements OnInit {
-  displayedColumns: string[] = ['productName', 'qty', 'price', 'actions', 'Delete'];
+  displayedColumns: string[] = ['productName', 'qty', 'price', 'actions', 'Delete','buy'];
   dataSource = new MatTableDataSource<Product>([]);
   searchQuery: string | any;
 
@@ -37,6 +38,7 @@ export class HomeComponent implements OnInit {
   id: Product[] | any;
   insertItem: any;
   insertform: any;
+  purchaseform: any;
 
   startDate: Date | null = null;
   endDate: Date | null = null;
@@ -56,9 +58,10 @@ export class HomeComponent implements OnInit {
   public chartOption: EChartsOption | any;
   value: any;
   totalPages: any;
+  qty: number | any;
+  product: any;
+  purchaseItem: any;
   
-  
- 
 
 
 
@@ -82,6 +85,12 @@ export class HomeComponent implements OnInit {
       endDate: [new Date().toISOString().split('T')[0]]
     });
 
+    this.purchaseform = this.fb.group({     
+      productName: ['', Validators.required],
+      qty: ['', [Validators.required, Validators.min(1)]],
+           
+    });
+
     // Default to one month later   
 
   }
@@ -89,6 +98,8 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     // Initial data fetch
+
+    
     this.getServerData({
       pageIndex: 0, pageSize: this.pageSize,
       length: 0
@@ -97,6 +108,7 @@ export class HomeComponent implements OnInit {
     });
 
     this.loadPieChartData();
+    
 
     
   }
@@ -141,7 +153,7 @@ export class HomeComponent implements OnInit {
         // Update pagination info if provided
         this.totalPages = data.totalPages;
       },
-      error => {
+      error => {        
         console.error('Error fetching chart data', error);
       }
     );
@@ -207,15 +219,16 @@ export class HomeComponent implements OnInit {
         }
       },
       (error) => {
-        // Log error if data fetching fails
+        // Log error if data fetching fails       
+       
+        this.dataSource.data = [];
         console.error('Error fetching data:', error);
       }
     );
   }
   
   editItem(item: Product): void {
-    this.editingItem = { ...item };
-    // this.userService.updateItem(this.editingItem);
+    this.editingItem = { ...item };    
   }
 
   saveEdit(): void {
@@ -368,7 +381,7 @@ export class HomeComponent implements OnInit {
 
     addsearchTerm(term: string): void
     {      
-      this.userService.addSearchTerm(term).subscribe(
+      this.userService.addSearchTerm(term.trim()).subscribe(
         (data) => {
           this.addsearchTerm = data; 
                           
@@ -378,6 +391,24 @@ export class HomeComponent implements OnInit {
         }
       );
     }
+
+
+    openPurchaseDialog(product: Product): void {      
+      
+      
+      const dialogRef = this.dialog.open(PurchaseDialogComponent, {
+        width: '300px',
+        data: product // Ensure 'product' is defined here
+      });
+    
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {          
+          this.ngOnInit();
+          console.log('Purchase dialog closed with confirmation');
+        }
+      });
+    }
+    
 
     
   }

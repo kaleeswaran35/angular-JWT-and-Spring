@@ -1,13 +1,14 @@
 package com.purchase.purchase.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.purchase.purchase.exception.PaymentException;
 import com.purchase.purchase.exception.PurchaseException;
+import com.purchase.purchase.model.Payment;
 import com.purchase.purchase.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
-import org.springframework.http.HttpStatus;
+
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -17,6 +18,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -27,53 +30,78 @@ public class PurchaseController {
     @Autowired
     private RestTemplate restTemplate;
 
+   
     @Value("${product.service.url}") // Assume you have a property defined in application.properties
     private String productServiceUrl;
+    
+    @Value("${payment.service.url}") // Assume you have a property defined in application.properties
+    private String paymentServiceUrl;
+
 
     private final ObjectMapper objectMapper = new ObjectMapper(); // ObjectMapper as a class member
 
-    @PutMapping("/purchase/{productName}")
+    @PutMapping("purchase/{productName}")
     public ResponseEntity<Object> purchaseProduct(@PathVariable String productName, HttpServletRequest request) {
         try {
             // Read and parse the request body
             String requestBody = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-            Product body = parseRequestBody(requestBody);
-            String Headers = request.getHeader("Authorization");
-            // Decrease product quantity using the product name and parsed product details
-            String url = String.format("%spurchase/%s", productServiceUrl, productName); // Construct the URL
-            // Create HTTP headers
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", Headers);              
-
-            // Create HttpEntity with the Product object as body and headers
-            HttpEntity<Product> entity = new HttpEntity<>(body, headers);            
-            try {
-                // Send Rest Template PUT request
-                ResponseEntity<Void> response = restTemplate.exchange(url, HttpMethod.PUT, entity, Void.class);                
-                // Check if the response indicates a successful request
-                if (!response.getStatusCode().is2xxSuccessful()) {
-                    throw new PurchaseException("Failed to update product: " + response.getStatusCode());
-                }
-            } catch (RestClientException e) {
-                throw new PurchaseException("Error occurred while contacting the Product Service: " + e.getMessage(), e);
+            Product productDetails = parseRequestBody(requestBody);
+            String authorizationHeader = request.getHeader("Authorization");
+            System.out.println("authorizationHeader"+authorizationHeader);    
+            // Step 1: Process Payment
+            if (!processPayment(productDetails, authorizationHeader)) {
+                throw new PaymentException("Payment processing failed.");
             }
-            
-        Map<String, Object> responseBody = new HashMap<>();
-        responseBody.put("message", "Product quantity decreased successfully.");
-        
 
-            return ResponseEntity.status(HttpStatus.OK).body(responseBody);
-        } catch (PurchaseException e) {
+            // Step 2: Update Product Quantity
+            String productServicefomatUrl = String.format("%spurchase/%s", productServiceUrl, productName); // Construct the URL
+            HttpHeaders headers = createHeaders(authorizationHeader);
+            HttpEntity<Product> entity = new HttpEntity<>(productDetails, headers);
+
+            ResponseEntity<Void> response = restTemplate.exchange(productServicefomatUrl, HttpMethod.PUT, entity, Void.class);
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                throw new PurchaseException("Failed to update product: " + response.getStatusCode());
+            }
+
+            // Prepare success response
+            Map<String, Object> responseBody = new HashMap<>();
+            responseBody.put("message", "Product quantity decreased successfully.");
+            return ResponseEntity.ok(responseBody);
+
+        } catch (PaymentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (IOException e) {
             return ResponseEntity.badRequest().body("Invalid request body: " + e.getMessage());
+        } catch (PurchaseException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An error occurred: " + e.getMessage());
+                    .body("An unexpected error occurred: " + e.getMessage());
         }
+    }
+
+    private boolean processPayment(Product productDetails, String authorizationHeader) {
+        String paymentServiceformatUrl = String.format("%spayment", paymentServiceUrl);
+        // Replace with actual payment service URL
+        HttpHeaders headers = createHeaders(authorizationHeader);
+        HttpEntity<Product> paymentEntity = new HttpEntity<>(productDetails, headers);
+
+        try {
+            ResponseEntity<Void> paymentResponse = restTemplate.exchange(paymentServiceformatUrl,HttpMethod.PUT,paymentEntity, Void.class);           
+            return paymentResponse.getStatusCode().is2xxSuccessful();
+        } catch (RestClientException e) {
+            throw new PaymentException("Error occurred while contacting the Payment Service: ");
+        }
+    }
+
+    private HttpHeaders createHeaders(String authorizationHeader) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", authorizationHeader);
+        return headers;
     }
 
     private Product parseRequestBody(String requestBody) throws IOException {
         return objectMapper.readValue(requestBody, Product.class);
     }
+
 }

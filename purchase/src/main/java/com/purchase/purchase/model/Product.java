@@ -32,6 +32,7 @@ public class Product {
     private LocalDate startDate;
     private LocalDate endDate;
     private LocalDate todayDate;
-      
+    private Integer card_number;  
+    private Integer cvv;
     
 }

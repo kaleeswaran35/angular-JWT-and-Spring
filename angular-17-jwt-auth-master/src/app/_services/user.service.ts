@@ -5,7 +5,9 @@ import { Product } from '../model/Product';
 import { PageEvent } from '@angular/material/paginator';
 import { LoggerService } from './logger.services';
 
+
 const API_URL = 'http://localhost:8080/';
+const API_URL_purchase = 'http://localhost:8082/';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Access-Control-Allow-Origin': '*' })
@@ -83,5 +85,20 @@ export class UserService {
       .set('size', pageSize.toString())   
     return this.http.get<any>(`${API_URL}chartdata`, { params });
   }
+
+  purchaseProducts(item:Product): Observable<any> {
+    const httpOptions = {
+      headers: new HttpHeaders({ 'Access-Control-Allow-Origin': '*' })
+    };
+    const jsonString = JSON.stringify(item, null, 0);    
+    const jsonObject = JSON.parse(jsonString);
+    delete jsonObject.startDate;
+    delete jsonObject.endDate;
+    delete jsonObject.todayDate;
+    console.log("jsonObject",jsonObject);    
+    return this.http.put(`${API_URL_purchase}purchase/`+ item.productName,jsonObject, httpOptions );
+      
+  }
+  
 
 }
