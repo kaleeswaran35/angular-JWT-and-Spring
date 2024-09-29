@@ -7,5 +7,16 @@ Implemented JWT authentication in angular 17 along with spring boot
 
 3)Please clone the spring boot apps and "mvn clean install" followed by starting the application on preferred IDE
 
+Tech Stack Terms:
+
+Java17
+Spring boot recent release
+MY SQL recent release
+Angular 17
+Node Latest
+Logger for Kibana 
+Email Services in Node
+Interceptor for JWT 
+Authenication implemented
 
 That's it learn and enjoy. Happy Coding 
