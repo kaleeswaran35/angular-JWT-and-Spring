@@ -17,6 +17,7 @@ Node Latest release,
 Logger for and Monitoring application in Kibana, 
 Email Services using Node,
 Interceptor for JWT,
-Authenication implemented Using Filters.
+Authenication implemented Using Filters,
+Rest Template for Microservices Communication.
 
 That's it learn and enjoy. Happy Coding 
