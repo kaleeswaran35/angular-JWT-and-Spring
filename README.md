@@ -13,9 +13,9 @@ Java17,
 Spring boot recent release,
 MY SQL recent release,
 Angular 17,
-Node Latest,
+Node Latest release,
 Logger for and Monitoring application in Kibana, 
-Email Services in Node,
+Email Services using Node,
 Interceptor for JWT,
 Authenication implemented Using Filters.
 
