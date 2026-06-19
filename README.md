@@ -21,4 +21,19 @@ Authenication implemented Using Filters,
 Maven,
 Rest Template for Microservices Communication.
 
+development of different service are in progress
+
+Url: localhost:4200/login
+
+userName for login: javainuse
+Password for login: password
+
+Make sure all the database and springboot applications are running so that u can enjoy the view of the full project.
+
 That's it learn and enjoy. Happy Coding 
+
+<img width="960" height="564" alt="image" src="https://github.com/user-attachments/assets/6d1675d7-3587-4bb6-bf56-34a9e7b94479" />
+
+
+<img width="960" height="564" alt="image" src="https://github.com/user-attachments/assets/c7b97ded-03db-428d-bf47-fb0609a9b329" />
+
