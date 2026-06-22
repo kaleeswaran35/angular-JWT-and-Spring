@@ -6,7 +6,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { StorageService } from '../_services/storage.service';
 import { TokenService } from '../token.service';
 
-const AUTH_API = 'http://localhost:8081/authenticate';
+const AUTH_API = 'http://192.168.1.3:8081/authenticate';
 const httpOptions = {
   headers: new HttpHeaders({
     'Content-Type': 'application/json',    

@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 
-const AUTH_API = 'http://localhost:8081/authenticate';
+const AUTH_API = 'http://192.168.1.3:8081/authenticate';
 
 const httpOptions = {  
   headers: new HttpHeaders({'Access-Control-Allow-Origin': '*'})

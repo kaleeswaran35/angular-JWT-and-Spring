@@ -1,5 +1,5 @@
 // app.component.ts
-import { Component, Injectable, OnInit, ViewChild } from '@angular/core';
+import { Component, Injectable, OnInit, ViewChild,HostListener } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Product } from '../model/Product';
 import { UserService } from '../_services/user.service';
@@ -28,6 +28,8 @@ import { PurchaseDialogComponent } from '../purchase-dialog/purchase-dialog.comp
 })
 
 
+
+
 export class HomeComponent implements OnInit {
   displayedColumns: string[] = ['productName', 'qty', 'price', 'actions', 'Delete','buy'];
   dataSource = new MatTableDataSource<Product>([]);
@@ -47,6 +49,12 @@ export class HomeComponent implements OnInit {
   length = 0;  // Total number of items (should be fetched from the server)
   data$: Observable<any> | undefined;
   pageIndex = 0;
+  isMobile = window.innerWidth <= 768;
+
+  @HostListener('window:resize')
+  onResize(): void {
+    this.isMobile = window.innerWidth <= 768;
+  }
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   isSearchDisabled: boolean | undefined;  
@@ -97,22 +105,30 @@ export class HomeComponent implements OnInit {
 
 
   ngOnInit(): void {
-    // Initial data fetch
 
-    
-    this.getServerData({
-      pageIndex: 0, pageSize: this.pageSize,
-      length: 0
+  this.isMobile = window.innerWidth <= 768;
 
-          
-    });
-
-    this.loadPieChartData();
-    
-
-    
+  if (this.isMobile) {
+    this.displayedColumns = [
+      'productName',
+      'qty',
+      'price'
+    ];
   }
-  
+
+  this.getServerData({
+    pageIndex: 0,
+    pageSize: this.pageSize,
+    length: 0
+  });
+
+  this.loadPieChartData();
+}
+
+  get isDesktop(): boolean {
+  return !this.isMobile;
+}
+
   loadPieChartData(): void {
     this.userService.getPieChartData(this.pageIndex, this.pageSize).subscribe(
       data => {

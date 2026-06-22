@@ -6,8 +6,8 @@ import { PageEvent } from '@angular/material/paginator';
 import { LoggerService } from './logger.services';
 
 
-const API_URL = 'http://localhost:8080/';
-const API_URL_purchase = 'http://localhost:8082/';
+const API_URL = 'http://192.168.1.3:8080/';
+const API_URL_purchase = 'http://192.168.1.3:8082/';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Access-Control-Allow-Origin': '*' })

@@ -19,6 +19,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -27,10 +28,11 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 
 @SpringBootApplication
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 @EnableAsync
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@Order(2)
 //@EnableJpaRepositories // enable transactional in the Spring at app level
 // Enabled JWT sucessfully by securing the API's 
 public class SpringDataJpaMappingApplication extends WebSecurityConfigurerAdapter {
@@ -51,15 +53,28 @@ public class SpringDataJpaMappingApplication extends WebSecurityConfigurerAdapte
     // Integrated with external services
     @Bean
     public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurerAdapter() {
+        return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "HEAD").allowedOrigins("*")
-                        .allowedHeaders("*");
+                registry.addMapping("/**")
+                        .allowedOrigins(
+                                "http://192.168.1.3:4200"
+                        )
+                        .allowedMethods(
+                                "GET",
+                                "POST",
+                                "PUT",
+                                "DELETE",
+                                "PATCH",
+                                "OPTIONS"
+                        )
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
             }
         };
     }
-
+    
+    
     // Injecting the Bean for Rest Service calls
     @Bean(name = "restTemplate")
     public RestTemplate getRestClient() {
