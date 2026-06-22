@@ -23,10 +23,13 @@ Rest Template for Microservices Communication.
 
 development of different service are in progress
 
-Url: localhost:4200/login
+Url: <your Machine IP>:4200/login
 
 userName for login: javainuse
 Password for login: password
+
+This project was fixed to update from any digital devices u prefer in desktop mode.
+
 
 Make sure all the database and springboot applications are running so that u can enjoy the view of the full project.
 
